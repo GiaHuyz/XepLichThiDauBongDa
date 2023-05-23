@@ -599,6 +599,7 @@
             this.grdTeams.Size = new System.Drawing.Size(898, 376);
             this.grdTeams.TabIndex = 16;
             this.grdTeams.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdTeams_CellClick);
+            this.grdTeams.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.grdTeams_DataError);
             // 
             // tpMatch
             // 
@@ -923,6 +924,7 @@
             this.grdMatches.Size = new System.Drawing.Size(898, 341);
             this.grdMatches.TabIndex = 19;
             this.grdMatches.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdMatches_CellClick);
+            this.grdMatches.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.grdMatches_DataError);
             // 
             // tpStandings
             // 
@@ -990,6 +992,7 @@
             this.grdStandings.RowTemplate.Height = 87;
             this.grdStandings.Size = new System.Drawing.Size(898, 567);
             this.grdStandings.TabIndex = 26;
+            this.grdStandings.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.grdStandings_DataError);
             // 
             // cbbLeagueStandings
             // 
@@ -1044,6 +1047,7 @@
             this.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "fUser";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Phần mềm tạo lịch thi đấu";
             this.Load += new System.EventHandler(this.fUser_Load);
             this.tcAdmin.ResumeLayout(false);

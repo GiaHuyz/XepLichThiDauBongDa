@@ -102,7 +102,7 @@ namespace XepLichThiDauBongDa.DAO
         public DataTable LoadAllMatchesByLeagueID(string leagueID)
         {
             DataTable dt = new DataTable();
-            dt = DataProvider.Instance.ExecuteQuery($"select Matches.MatchID, HomeTeam.TeamID, AwayTeam.TeamID, HomeTeam.TeamName as HomeTeam, HomeTeam.Logo as HomeTeamLogo, CONVERT(varchar, Matches.HomeTeamScore) + ' - ' + CONVERT(varchar, Matches.AwayTeamScore) as Result, AwayTeam.Logo as AwayTeamLogo, AwayTeam.TeamName as AwayTeam, Matches.MatchDate, Matches.Status, Matches.Turn FROM Matches INNER JOIN Teams AS HomeTeam ON Matches.HomeTeamID = HomeTeam.TeamID INNER JOIN Teams AS AwayTeam ON Matches.AwayTeamID = AwayTeam.TeamID  WHERE LeagueID = '{leagueID}'");
+            dt = DataProvider.Instance.ExecuteQuery($"select Matches.MatchID, HomeTeam.TeamID as HomeTeamID, AwayTeam.TeamID as AwayTeamID, HomeTeam.TeamName as HomeTeam, HomeTeam.Logo as HomeTeamLogo, CONVERT(varchar, Matches.HomeTeamScore) + ' - ' + CONVERT(varchar, Matches.AwayTeamScore) as Result, AwayTeam.Logo as AwayTeamLogo, AwayTeam.TeamName as AwayTeam, Matches.MatchDate, Matches.Status, Matches.Turn FROM Matches INNER JOIN Teams AS HomeTeam ON Matches.HomeTeamID = HomeTeam.TeamID INNER JOIN Teams AS AwayTeam ON Matches.AwayTeamID = AwayTeam.TeamID  WHERE LeagueID = '{leagueID}'");
             return dt;
         }
 
@@ -146,7 +146,7 @@ namespace XepLichThiDauBongDa.DAO
             }
             catch (Exception)
             {
-                return DateTime.MinValue;
+                return DateTime.MaxValue;
             }
         }
 

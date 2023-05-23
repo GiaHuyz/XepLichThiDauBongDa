@@ -353,24 +353,29 @@ namespace XepLichThiDauBongDa
                 return;
             }
             DataTable dt = MatchesDAO.Instance.GetDataMatchesByLeagueId(cbbLeaguesNameTeams.SelectedValue.ToString());
-            if (dt.Rows.Count > 1)
+            if (dt.Rows.Count > 0 && grdTeams.CurrentRow != null)
             {
                 DialogResult dialogResult = MessageBox.Show($"Tất cả trận đấu và thành tích của đội {txtNameTeam.Text} đều sẽ bị xoá. Bạn có chắc không ? ", "Thông báo", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
                 if (dialogResult == DialogResult.OK)
                 {
-                    TeamsDAO.Instance.DeleteTeam(txtIDTeam.Text);
+                    MatchesDAO.Instance.DeleteMatchesByLeagueID(cbbLeaguesNameTeams.SelectedValue.ToString());
+                    StandingsDAO.Instance.DeleteStandingsByLeagueID(cbbLeaguesNameTeams.SelectedValue.ToString());
+                    TeamsDAO.Instance.DeleteTeam(grdTeams.CurrentRow.Cells["TeamID"].Value.ToString());
                     List<Teams> teams = GetAllTeamsByLeagueID(cbbLeaguesNameTeams.SelectedValue.ToString());
                     int count = teams.Count;
                     totalPages = (count - 1) * 2;
                     rowPerPages = count / 2;
                 }
             }
-            else
+            else if(grdTeams.CurrentRow != null)
             {
+                string teamID = grdTeams.CurrentRow.Cells["TeamID"].Value.ToString();
                 DialogResult dialogResult = MessageBox.Show($"Bạn có chắc muốn xoá đội {txtNameTeam.Text} ? ", "Thông báo", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
                 if (dialogResult == DialogResult.OK)
                 {
-                    TeamsDAO.Instance.DeleteTeam(txtIDTeam.Text);
+                    MatchesDAO.Instance.DeleteMatchesByLeagueID(cbbLeaguesNameTeams.SelectedValue.ToString());
+                    StandingsDAO.Instance.DeleteStandingsByLeagueID(cbbLeaguesNameTeams.SelectedValue.ToString());
+                    TeamsDAO.Instance.DeleteTeam(teamID);
                     LoadCbbTeams();
                     LoadTeamsByLeagueID(cbbLeaguesNameTeams.SelectedValue.ToString());
                 }
@@ -472,7 +477,7 @@ namespace XepLichThiDauBongDa
                 return;
             }
             LoadTeamsByLeagueID(cbbLeaguesNameTeams.SelectedValue.ToString());
-            if (grdTeams.Rows.Count > 1)
+            if (grdTeams.Rows.Count > 0)
             {
                 grdTeams_CellClick(grdTeams, new DataGridViewCellEventArgs(0, 0));
             }
@@ -482,6 +487,9 @@ namespace XepLichThiDauBongDa
                 txtNameTeam.Text = string.Empty;
                 txtAbbreviationTeam.Text = string.Empty;
                 ptbLogo.Image = null;
+                btnDeleteTeam.Enabled = false;
+                btnSaveTeam.Enabled = false;
+                btnEditTeam.Enabled = false;
             }
         }
 
@@ -513,12 +521,6 @@ namespace XepLichThiDauBongDa
                 btnBrowseImage.Enabled = false;
                 LoadTeamsByLeagueID(cbbLeaguesNameTeams.SelectedValue.ToString());
                 grdTeams_CellClick(grdTeams, new DataGridViewCellEventArgs(0, 0));
-            }
-            if (tcAdmin.SelectedIndex == 2)
-            {
-                grdMatches.ClearSelection();
-                LoadMatchesByNumPage(1, rowPerPages, cbbLeaguesNameMatch.SelectedValue.ToString());
-                grdMatches_CellClick(grdMatches, new DataGridViewCellEventArgs(0, 0));
             }
         }
 
@@ -639,8 +641,16 @@ namespace XepLichThiDauBongDa
             }
             int selectedRowIndex = grdMatches.CurrentRow.Index;
             MatchesDAO.Instance.UpdateMatchDate(dtpkMatchDate.Value, grdMatches.CurrentRow.Cells["MatchID"].Value.ToString());
-            LoadMatchesByNumPage((int)nmPage.Value, rowPerPages, leagueID);
-            grdMatches.CurrentCell = grdMatches.Rows[selectedRowIndex].Cells[0];
+            if (grdMatches.Rows.Count == rowPerPages)
+            {
+                LoadMatchesByNumPage((int)nmPage.Value, rowPerPages, leagueID);
+                grdMatches.CurrentCell = grdMatches.Rows[selectedRowIndex].Cells[0];
+            }
+            else
+            {
+                grdMatches.DataSource = MatchesDAO.Instance.LoadAllMatchesByLeagueID(cbbLeaguesNameMatch.SelectedValue.ToString());
+                grdMatches.CurrentCell = grdMatches.Rows[selectedRowIndex].Cells[0];
+            }
             grdMatches_CellClick(grdMatches, new DataGridViewCellEventArgs(0, selectedRowIndex));
         }
 
@@ -695,9 +705,17 @@ namespace XepLichThiDauBongDa
                         UpdateStandings(awayTeamID, leagueID, pointAwayTeam[0].Item1 + 1, pointAwayTeam[0].Item2, pointAwayTeam[0].Item3 + 1, pointAwayTeam[0].Item4, pointAwayTeam[0].Item5 + goalAway, pointAwayTeam[0].Item6 + goalHome);
                     }
                 }
-                LoadMatchesByNumPage((int)nmPage.Value, rowPerPages, leagueID);
+                if (grdMatches.Rows.Count == rowPerPages)
+                {
+                    LoadMatchesByNumPage((int)nmPage.Value, rowPerPages, leagueID);
+                    grdMatches.CurrentCell = grdMatches.Rows[selectedRowIndex].Cells[0];
+                }
+                else
+                {
+                    grdMatches.DataSource = MatchesDAO.Instance.LoadAllMatchesByLeagueID(cbbLeaguesNameMatch.SelectedValue.ToString());
+                    grdMatches.CurrentCell = grdMatches.Rows[selectedRowIndex].Cells[0];
+                }
                 LoadStandingsByLeagueID(leagueID);
-                grdMatches.CurrentCell = grdMatches.Rows[selectedRowIndex].Cells[0];
                 grdMatches_CellClick(grdMatches, new DataGridViewCellEventArgs(0, selectedRowIndex));
                 this.ActiveControl = null;
             }
@@ -754,8 +772,8 @@ namespace XepLichThiDauBongDa
 
                             foreach (DataGridViewColumn column in grdMatches.Columns)
                             {
-                                if (column.Name != "TeamID" &&
-                                    column.Name != "TeamID1")
+                                if (column.Name != "HomeTeamID" &&
+                                    column.Name != "AwayTeamID")
                                 {
                                     PdfPCell cell = new PdfPCell(new Phrase(column.HeaderText));
                                     pdfTable.AddCell(cell);
@@ -776,8 +794,8 @@ namespace XepLichThiDauBongDa
                                         PdfPCell imgCell = new PdfPCell(pdfImg, true);
                                         pdfTable.AddCell(imgCell);
                                     }
-                                    else if (cell.OwningColumn.Name != "TeamID" &&
-                                        cell.OwningColumn.Name != "TeamID1")
+                                    else if (cell.OwningColumn.Name != "HomeTeamID" &&
+                                        cell.OwningColumn.Name != "AwayTeamID")
                                     {
                                         pdfTable.AddCell(cell.Value.ToString());
                                     }
@@ -988,6 +1006,7 @@ namespace XepLichThiDauBongDa
             pnInfoMatch.Visible = true;
             pnPage.Visible = true;
             nmPage.Maximum = totalPages;
+            nmPage.Minimum = 1;
             txtNumPage.Text = "Vòng 1 / " + totalPages;
             LoadMatchesByNumPage(1, rowPerPages, leagueID);
             foreach (var team in teams)
@@ -1010,6 +1029,7 @@ namespace XepLichThiDauBongDa
             rowPerPages = count / 2;
             txtNumPage.Text = "Vòng 1 / " + totalPages;
             nmPage.Maximum = totalPages;
+            nmPage.Minimum = 1;
             LoadMatchesByNumPage(1, rowPerPages, cbbLeaguesNameMatch.SelectedValue.ToString());
             if (grdMatches.Rows.Count < 1)
             {
@@ -1234,6 +1254,16 @@ namespace XepLichThiDauBongDa
                     ptbHome.Image = null;
                 }
             }
+        }
+
+        private void grdMatches_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            e.Cancel = true;
+        }
+
+        private void grdStandings_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            e.Cancel = true;
         }
     }
 }

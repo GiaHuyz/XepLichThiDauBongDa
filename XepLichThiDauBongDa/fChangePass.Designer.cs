@@ -117,7 +117,7 @@
             this.MaximizeBox = false;
             this.Name = "fChangePass";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "fChangePass";
+            this.Text = "Đổi mật khẩu";
             this.ResumeLayout(false);
             this.PerformLayout();
 

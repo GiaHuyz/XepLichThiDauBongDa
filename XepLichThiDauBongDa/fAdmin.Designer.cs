@@ -117,8 +117,6 @@
             this.tpAccount = new System.Windows.Forms.TabPage();
             this.nmRoles = new System.Windows.Forms.NumericUpDown();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.txtSearchAcc = new System.Windows.Forms.TextBox();
-            this.btnSearchAcc = new System.Windows.Forms.Button();
             this.btnEditAcc = new System.Windows.Forms.Button();
             this.btnDeleteAcc = new System.Windows.Forms.Button();
             this.txtUsername = new System.Windows.Forms.TextBox();
@@ -963,6 +961,7 @@
             this.grdMatches.Size = new System.Drawing.Size(898, 345);
             this.grdMatches.TabIndex = 22;
             this.grdMatches.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdMatches_CellClick);
+            this.grdMatches.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.grdMatches_DataError);
             // 
             // tpStandings
             // 
@@ -1030,6 +1029,7 @@
             this.grdStandings.RowTemplate.Height = 87;
             this.grdStandings.Size = new System.Drawing.Size(898, 567);
             this.grdStandings.TabIndex = 46;
+            this.grdStandings.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.grdStandings_DataError);
             // 
             // cbbLeagueStandings
             // 
@@ -1081,30 +1081,12 @@
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.txtSearchAcc);
-            this.panel3.Controls.Add(this.btnSearchAcc);
             this.panel3.Controls.Add(this.btnEditAcc);
             this.panel3.Controls.Add(this.btnDeleteAcc);
             this.panel3.Location = new System.Drawing.Point(6, 125);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(898, 78);
             this.panel3.TabIndex = 28;
-            // 
-            // txtSearchAcc
-            // 
-            this.txtSearchAcc.Location = new System.Drawing.Point(581, 18);
-            this.txtSearchAcc.Name = "txtSearchAcc";
-            this.txtSearchAcc.Size = new System.Drawing.Size(181, 34);
-            this.txtSearchAcc.TabIndex = 18;
-            // 
-            // btnSearchAcc
-            // 
-            this.btnSearchAcc.Location = new System.Drawing.Point(779, 16);
-            this.btnSearchAcc.Name = "btnSearchAcc";
-            this.btnSearchAcc.Size = new System.Drawing.Size(99, 39);
-            this.btnSearchAcc.TabIndex = 18;
-            this.btnSearchAcc.Text = "Tìm kiếm";
-            this.btnSearchAcc.UseVisualStyleBackColor = true;
             // 
             // btnEditAcc
             // 
@@ -1239,7 +1221,6 @@
             this.tpAccount.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nmRoles)).EndInit();
             this.panel3.ResumeLayout(false);
-            this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grdAcc)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1335,8 +1316,6 @@
         private System.Windows.Forms.Button btnChangePass;
         private System.Windows.Forms.TabPage tpAccount;
         private System.Windows.Forms.Panel panel3;
-        private System.Windows.Forms.TextBox txtSearchAcc;
-        private System.Windows.Forms.Button btnSearchAcc;
         private System.Windows.Forms.Button btnEditAcc;
         private System.Windows.Forms.Button btnDeleteAcc;
         private System.Windows.Forms.TextBox txtUsername;

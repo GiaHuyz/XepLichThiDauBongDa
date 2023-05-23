@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text.RegularExpressions;
 using XepLichThiDauBongDa.DTO;
 
 namespace XepLichThiDauBongDa.DAO
@@ -115,15 +116,13 @@ namespace XepLichThiDauBongDa.DAO
         public bool CheckDuplicateUpdateTeamName(string teamName, string abbreviation)
         {
             DataTable dt = new DataTable();
-            dt = DataProvider.Instance.ExecuteQuery($"SELECT * FROM Teams WHERE (TeamName = '{teamName}' OR abbreviation = '{abbreviation}') AND (TeamName NOT IN ('{teamName}') OR abbreviation NOT IN ('{abbreviation}'))");
+            dt = DataProvider.Instance.ExecuteQuery($"SELECT * FROM Teams WHERE (TeamName = '{teamName}' AND TeamName NOT IN ('{teamName}')) OR (abbreviation = '{abbreviation}' AND abbreviation NOT IN ('{abbreviation}'))");
             return dt.Rows.Count > 0;
         }
 
         public void DeleteTeam(string teamID)
         {
             DataProvider.Instance.ExecuteNonQuery($"DELETE FROM LeagueTeams where TeamID = '{teamID}'");
-            DataProvider.Instance.ExecuteNonQuery($"DELETE FROM Matches WHERE HomeTeamID = '{teamID}' OR AwayTeamID = '{teamID}'");
-            DataProvider.Instance.ExecuteNonQuery($"DELETE FROM Standings WHERE TeamID = '{teamID}'");
             DataProvider.Instance.ExecuteNonQuery($"DELETE FROM Teams where TeamID = '{teamID}'");
         }
 
